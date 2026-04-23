@@ -1,0 +1,203 @@
+<h2>Flow Builder — Admin View</h2>
+<p class="subtitle">Drag-and-drop visual workflow editor — Section 3 of 5</p>
+
+<div class="section">
+  <div style="display:flex;gap:12px;height:480px;">
+
+    <!-- Node Palette (left sidebar) -->
+    <div style="width:160px;flex-shrink:0;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#475569;margin-bottom:4px;">Node Types</div>
+      <div style="font-size:11px;color:#64748b;margin-bottom:8px;">Drag onto canvas →</div>
+
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px;cursor:grab;display:flex;align-items:center;gap:8px;">
+        <div style="width:10px;height:10px;border-radius:3px;background:#6366f1;"></div>
+        <span style="font-size:13px;color:#e2e8f0;">Stage</span>
+      </div>
+
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px;cursor:grab;display:flex;align-items:center;gap:8px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:#f59e0b;"></div>
+        <span style="font-size:13px;color:#e2e8f0;">Approval</span>
+      </div>
+
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px;cursor:grab;display:flex;align-items:center;gap:8px;">
+        <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid #10b981;"></div>
+        <span style="font-size:13px;color:#e2e8f0;">Condition</span>
+      </div>
+
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px;cursor:grab;display:flex;align-items:center;gap:8px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ef4444;border:2px solid #ef4444;"></div>
+        <span style="font-size:13px;color:#e2e8f0;">End</span>
+      </div>
+
+      <div style="margin-top:auto;border-top:1px solid #1e293b;padding-top:12px;">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#475569;margin-bottom:8px;">Legend</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <div style="width:20px;height:2px;background:#ef4444;"></div>
+          <span style="font-size:11px;color:#64748b;">Mandatory</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:20px;height:2px;background:#334155;border-top:2px dashed #475569;"></div>
+          <span style="font-size:11px;color:#64748b;">Optional</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div style="flex:1;background:#0a0f1a;border:1px solid #1e293b;border-radius:10px;position:relative;overflow:hidden;">
+      <!-- Grid dots -->
+      <div style="position:absolute;inset:0;background-image:radial-gradient(#1e293b 1px,transparent 1px);background-size:24px 24px;opacity:0.5;"></div>
+
+      <!-- Canvas toolbar -->
+      <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#1e293b;border:1px solid #334155;border-radius:8px;padding:6px 12px;display:flex;gap:12px;z-index:10;">
+        <span style="font-size:12px;color:#94a3b8;cursor:pointer;">Undo</span>
+        <span style="color:#334155;">|</span>
+        <span style="font-size:12px;color:#94a3b8;cursor:pointer;">Redo</span>
+        <span style="color:#334155;">|</span>
+        <span style="font-size:12px;color:#94a3b8;cursor:pointer;">Auto-layout</span>
+        <span style="color:#334155;">|</span>
+        <span style="font-size:12px;color:#94a3b8;cursor:pointer;">Zoom fit</span>
+      </div>
+
+      <!-- Flow nodes on canvas -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%;">
+        <!-- Edge: Start → Design Review -->
+        <path d="M 130 180 C 185 180, 185 180, 220 180" stroke="#6366f1" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+        <!-- Edge: Design Review → Approval (mandatory - red) -->
+        <path d="M 350 180 C 405 180, 405 180, 440 180" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+        <!-- Edge: Approval → Condition -->
+        <path d="M 570 180 C 625 180, 625 180, 660 180" stroke="#6366f1" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+        <!-- Edge: Condition → Dev (yes branch) -->
+        <path d="M 720 160 C 760 120, 800 120, 840 120" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+        <!-- Edge: Condition → Revision (no branch) -->
+        <path d="M 720 200 C 760 240, 800 240, 840 240" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arrow-yellow)"/>
+        <!-- Edge: Dev → Done -->
+        <path d="M 970 120 L 1010 120 L 1010 175 L 1040 175" stroke="#6366f1" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+        <!-- Edge: Revision → Done (dashed) -->
+        <path d="M 970 240 L 1010 240 L 1010 190 L 1040 190" stroke="#475569" stroke-width="2" stroke-dasharray="5,3" fill="none" marker-end="url(#arrow-gray)"/>
+
+        <defs>
+          <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 z" fill="#6366f1"/>
+          </marker>
+          <marker id="arrow-red" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 z" fill="#ef4444"/>
+          </marker>
+          <marker id="arrow-green" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 z" fill="#10b981"/>
+          </marker>
+          <marker id="arrow-yellow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 z" fill="#f59e0b"/>
+          </marker>
+          <marker id="arrow-gray" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 z" fill="#475569"/>
+          </marker>
+        </defs>
+      </svg>
+
+      <!-- Start node -->
+      <div style="position:absolute;left:60px;top:163px;width:70px;height:34px;background:#1e293b;border:2px solid #334155;border-radius:17px;display:flex;align-items:center;justify-content:center;">
+        <span style="font-size:12px;color:#94a3b8;">Start</span>
+      </div>
+
+      <!-- Stage: Design Review -->
+      <div style="position:absolute;left:220px;top:148px;width:130px;background:#1e293b;border:2px solid #6366f1;border-radius:8px;padding:10px;">
+        <div style="font-size:10px;color:#818cf8;text-transform:uppercase;letter-spacing:1px;">Stage</div>
+        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-top:2px;">Design Review</div>
+        <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap;">
+          <span style="font-size:10px;background:#0f172a;color:#64748b;border-radius:4px;padding:2px 6px;">3 tasks</span>
+          <span style="font-size:10px;background:#0f172a;color:#64748b;border-radius:4px;padding:2px 6px;">optional</span>
+        </div>
+      </div>
+
+      <!-- Approval node (mandatory) -->
+      <div style="position:absolute;left:440px;top:148px;width:130px;background:#1e293b;border:2px solid #ef4444;border-radius:8px;padding:10px;">
+        <div style="font-size:10px;color:#fb7185;text-transform:uppercase;letter-spacing:1px;">Approval ★</div>
+        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-top:2px;">Manager Sign-off</div>
+        <div style="margin-top:6px;">
+          <span style="font-size:10px;background:#450a0a;color:#fca5a5;border-radius:4px;padding:2px 6px;">mandatory</span>
+        </div>
+      </div>
+
+      <!-- Condition node -->
+      <div style="position:absolute;left:660px;top:148px;width:60px;height:60px;background:#1e293b;border:2px solid #10b981;transform:rotate(45deg);display:flex;align-items:center;justify-content:center;">
+        <span style="transform:rotate(-45deg);font-size:10px;color:#34d399;text-align:center;line-height:1.2;">Priority<br/>?</span>
+      </div>
+      <div style="position:absolute;left:648px;top:215px;font-size:10px;color:#10b981;">Condition</div>
+
+      <!-- Yes branch label -->
+      <div style="position:absolute;left:775px;top:95px;font-size:10px;color:#10b981;">Yes →</div>
+
+      <!-- No branch label -->
+      <div style="position:absolute;left:778px;top:248px;font-size:10px;color:#f59e0b;">No →</div>
+
+      <!-- Stage: Dev Work -->
+      <div style="position:absolute;left:840px;top:95px;width:130px;background:#1e293b;border:2px solid #6366f1;border-radius:8px;padding:10px;">
+        <div style="font-size:10px;color:#818cf8;text-transform:uppercase;letter-spacing:1px;">Stage</div>
+        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-top:2px;">Dev Work</div>
+        <div style="margin-top:6px;">
+          <span style="font-size:10px;background:#0f172a;color:#64748b;border-radius:4px;padding:2px 6px;">5 tasks</span>
+        </div>
+      </div>
+
+      <!-- Stage: Revision -->
+      <div style="position:absolute;left:840px;top:215px;width:130px;background:#1e293b;border:2px solid #334155;border-radius:8px;padding:10px;border-style:dashed;">
+        <div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:1px;">Stage</div>
+        <div style="font-size:13px;font-weight:600;color:#94a3b8;margin-top:2px;">Revision</div>
+        <div style="margin-top:6px;">
+          <span style="font-size:10px;background:#0f172a;color:#64748b;border-radius:4px;padding:2px 6px;">optional</span>
+        </div>
+      </div>
+
+      <!-- End node -->
+      <div style="position:absolute;left:1040px;top:163px;width:60px;height:34px;background:#450a0a;border:2px solid #ef4444;border-radius:17px;display:flex;align-items:center;justify-content:center;">
+        <span style="font-size:12px;color:#fca5a5;">Done</span>
+      </div>
+    </div>
+
+    <!-- Right panel: Node config -->
+    <div style="width:190px;flex-shrink:0;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:12px;overflow-y:auto;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#475569;margin-bottom:12px;">Node Config</div>
+      <div style="font-size:11px;color:#64748b;margin-bottom:12px;">Click a node to edit</div>
+
+      <!-- Example: selected approval node config -->
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px;margin-bottom:8px;">
+        <div style="font-size:11px;color:#fb7185;margin-bottom:6px;">★ Manager Sign-off</div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">Approvers</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-size:10px;background:#1e3a5f;color:#93c5fd;border-radius:12px;padding:2px 8px;">@dept-head</span>
+          <span style="font-size:10px;background:#1e3a5f;color:#93c5fd;border-radius:12px;padding:2px 8px;">+ Add</span>
+        </div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">Mandatory</div>
+        <div style="background:#0a0f1a;border-radius:4px;padding:4px 8px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:11px;color:#94a3b8;">Enforce</span>
+          <div style="width:28px;height:14px;background:#ef4444;border-radius:7px;"></div>
+        </div>
+      </div>
+
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px;">
+        <div style="font-size:11px;color:#818cf8;margin-bottom:6px;">Checklist</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="display:flex;gap:6px;align-items:center;">
+            <div style="width:10px;height:10px;border:1px solid #475569;border-radius:2px;"></div>
+            <span style="font-size:11px;color:#94a3b8;">Review designs</span>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <div style="width:10px;height:10px;border:1px solid #475569;border-radius:2px;"></div>
+            <span style="font-size:11px;color:#94a3b8;">Check specs doc</span>
+          </div>
+          <div style="font-size:11px;color:#475569;cursor:pointer;margin-top:4px;">+ Add item</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="margin-top:12px;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+  <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:10px;">How It Works</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;color:#64748b;line-height:1.6;">
+    <div><strong style="color:#94a3b8;">1. Build</strong><br>Admin drags node types onto canvas, connects with edges, names each stage</div>
+    <div><strong style="color:#94a3b8;">2. Configure</strong><br>Click any node: set mandatory/optional, add checklist items, assign approvers, define branch conditions</div>
+    <div><strong style="color:#94a3b8;">3. Assign</strong><br>Publish template and assign to one or more departments — they can now spawn projects from it</div>
+  </div>
+</div>

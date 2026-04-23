@@ -1,0 +1,7 @@
+{"type":"server-started","port":59081,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:59081","screen_dir":"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/.superpowers/brainstorm/31924-1776707038/content","state_dir":"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/.superpowers/brainstorm/31924-1776707038/state"}
+{"type":"screen-added","file":"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/.superpowers/brainstorm/31924-1776707038/content/architecture.html"}
+{"type":"screen-added","file":"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/.superpowers/brainstorm/31924-1776707038/content/data-model.html"}
+{"type":"screen-added","file":"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/.superpowers/brainstorm/31924-1776707038/content/flow-builder.html"}
+{"type":"screen-added","file":"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/.superpowers/brainstorm/31924-1776707038/content/kanban-view.html"}
+{"type":"screen-added","file":"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/.superpowers/brainstorm/31924-1776707038/content/app-shell.html"}
+{"type":"server-stopped","reason":"idle timeout"}

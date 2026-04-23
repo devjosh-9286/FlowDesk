@@ -1,0 +1,129 @@
+<h2>App Shell — Navigation & Notifications</h2>
+<p class="subtitle">Overall layout, role-based nav, and notification system — Section 5 of 5</p>
+
+<div class="section">
+  <div style="display:flex;gap:12px;">
+
+    <!-- Sidebar -->
+    <div style="width:200px;flex-shrink:0;background:#0a0f1a;border:1px solid #1e293b;border-radius:10px;padding:12px;display:flex;flex-direction:column;">
+
+      <!-- Org switcher -->
+      <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:8px 10px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:24px;height:24px;background:#6366f1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:700;">AC</div>
+          <span style="font-size:13px;color:#e2e8f0;font-weight:600;">Acme Corp</span>
+        </div>
+        <span style="color:#475569;font-size:12px;">⌄</span>
+      </div>
+
+      <!-- Nav: Member view -->
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#334155;margin-bottom:6px;">Workspace</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;background:#1e293b;margin-bottom:2px;cursor:pointer;">
+        <span style="font-size:14px;">🏠</span><span style="font-size:13px;color:#e2e8f0;">Home</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;margin-bottom:2px;cursor:pointer;">
+        <span style="font-size:14px;">📋</span><span style="font-size:13px;color:#94a3b8;">My Tasks</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;margin-bottom:2px;cursor:pointer;">
+        <span style="font-size:14px;">📁</span><span style="font-size:13px;color:#94a3b8;">Projects</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;margin-bottom:2px;cursor:pointer;">
+        <span style="font-size:14px;">🔔</span>
+        <span style="font-size:13px;color:#94a3b8;">Notifications</span>
+        <span style="margin-left:auto;font-size:10px;background:#ef4444;color:white;border-radius:10px;padding:1px 6px;">3</span>
+      </div>
+
+      <div style="border-top:1px solid #1e293b;margin:10px 0;"></div>
+
+      <!-- Dept section -->
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#334155;margin-bottom:6px;">Departments</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;margin-bottom:2px;cursor:pointer;">
+        <div style="width:6px;height:6px;border-radius:50%;background:#6366f1;"></div><span style="font-size:13px;color:#94a3b8;">Marketing</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;margin-bottom:2px;cursor:pointer;">
+        <div style="width:6px;height:6px;border-radius:50%;background:#10b981;"></div><span style="font-size:13px;color:#94a3b8;">Engineering</span>
+      </div>
+
+      <div style="border-top:1px solid #1e293b;margin:10px 0;"></div>
+
+      <!-- Admin section (only visible to Org Admin) -->
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#334155;margin-bottom:6px;">Admin</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;margin-bottom:2px;cursor:pointer;">
+        <span style="font-size:14px;">⚙️</span><span style="font-size:13px;color:#94a3b8;">Flow Templates</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;margin-bottom:2px;cursor:pointer;">
+        <span style="font-size:14px;">👥</span><span style="font-size:13px;color:#94a3b8;">People & Roles</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;margin-bottom:2px;cursor:pointer;">
+        <span style="font-size:14px;">🏢</span><span style="font-size:13px;color:#94a3b8;">Org Settings</span>
+      </div>
+
+      <!-- User avatar at bottom -->
+      <div style="margin-top:auto;border-top:1px solid #1e293b;padding-top:10px;display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <div style="width:28px;height:28px;border-radius:50%;background:#6366f1;display:flex;align-items:center;justify-content:center;font-size:11px;color:white;">JP</div>
+        <div>
+          <div style="font-size:12px;color:#e2e8f0;">Josh Phillips</div>
+          <div style="font-size:10px;color:#475569;">Org Admin</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main area -->
+    <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+
+      <!-- Role-based nav labels -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div style="background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#818cf8;margin-bottom:8px;">Org Admin sees</div>
+          <div style="font-size:12px;color:#64748b;line-height:1.7;">All departments<br>Flow Templates builder<br>People & Roles<br>Org-wide analytics<br>Billing & settings</div>
+        </div>
+        <div style="background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#34d399;margin-bottom:8px;">Dept Manager sees</div>
+          <div style="font-size:12px;color:#64748b;line-height:1.7;">Own dept projects<br>Approve/reject requests<br>Dept member list<br>Template picker<br>Dept analytics</div>
+        </div>
+        <div style="background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:8px;">Member sees</div>
+          <div style="font-size:12px;color:#64748b;line-height:1.7;">My tasks<br>Assigned projects<br>Dept projects (read)<br>Own notifications<br>Profile settings</div>
+        </div>
+      </div>
+
+      <!-- Notification panel -->
+      <div style="background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:12px;">Notifications <span style="font-size:11px;color:#64748b;font-weight:400;">· In-app (Phase 1) + Email digest</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+
+          <div style="display:flex;gap:10px;align-items:flex-start;background:#1e293b;border-radius:8px;padding:10px;border-left:3px solid #ef4444;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#7f1d1d;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">★</div>
+            <div>
+              <div style="font-size:13px;color:#e2e8f0;font-weight:500;">Approval requested on <span style="color:#818cf8;">Q2 Campaign Launch</span></div>
+              <div style="font-size:11px;color:#64748b;margin-top:2px;">Marketing · Manager Sign-off gate · 10 min ago</div>
+              <div style="display:flex;gap:6px;margin-top:8px;">
+                <div style="background:#10b981;border-radius:6px;padding:4px 12px;font-size:12px;color:white;cursor:pointer;">Approve</div>
+                <div style="background:#1e293b;border:1px solid #334155;border-radius:6px;padding:4px 12px;font-size:12px;color:#94a3b8;cursor:pointer;">Reject</div>
+                <div style="background:#1e293b;border:1px solid #334155;border-radius:6px;padding:4px 12px;font-size:12px;color:#94a3b8;cursor:pointer;">View</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;background:#1e293b;border-radius:8px;padding:10px;border-left:3px solid #6366f1;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#6366f1;display:flex;align-items:center;justify-content:center;font-size:11px;color:white;flex-shrink:0;">SR</div>
+            <div>
+              <div style="font-size:13px;color:#e2e8f0;font-weight:500;">Sara assigned you to <span style="color:#818cf8;">Write copy for landing page</span></div>
+              <div style="font-size:11px;color:#64748b;margin-top:2px;">Q2 Campaign Launch · Due Apr 25 · 1 hr ago</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:flex-start;background:#1e293b;border-radius:8px;padding:10px;border-left:3px solid #334155;opacity:0.6;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;font-size:11px;color:white;flex-shrink:0;">MK</div>
+            <div>
+              <div style="font-size:13px;color:#94a3b8;font-weight:500;">Mike completed <span style="color:#64748b;">Kickoff meeting</span></div>
+              <div style="font-size:11px;color:#475569;margin-top:2px;">Q2 Campaign Launch · Apr 15</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

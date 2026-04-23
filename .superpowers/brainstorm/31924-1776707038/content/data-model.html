@@ -1,0 +1,150 @@
+<h2>Data Model</h2>
+<p class="subtitle">Core entities and relationships — Section 2 of 5</p>
+
+<div class="section">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+
+    <!-- Org -->
+    <div style="background:#1e293b;border:2px solid #6366f1;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#818cf8;margin-bottom:8px;">Organization</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        name<br>
+        slug <span style="color:#475569">(unique URL)</span><br>
+        plan <span style="color:#475569">(free/pro)</span><br>
+        createdAt
+      </div>
+    </div>
+
+    <!-- User -->
+    <div style="background:#1e293b;border:2px solid #6366f1;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#818cf8;margin-bottom:8px;">User</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        email<br>
+        name<br>
+        avatarUrl<br>
+        createdAt
+      </div>
+    </div>
+
+    <!-- OrgMembership -->
+    <div style="background:#1e293b;border:2px solid #f59e0b;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#fbbf24;margin-bottom:8px;">OrgMembership</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        orgId → Org<br>
+        userId → User<br>
+        role <span style="color:#475569">(ADMIN/MANAGER/MEMBER)</span><br>
+        departmentId → Dept
+      </div>
+    </div>
+
+    <!-- Department -->
+    <div style="background:#1e293b;border:2px solid #6366f1;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#818cf8;margin-bottom:8px;">Department</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        orgId → Org<br>
+        name<br>
+        managerId → User
+      </div>
+    </div>
+
+    <!-- FlowTemplate -->
+    <div style="background:#1e293b;border:2px solid #10b981;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#34d399;margin-bottom:8px;">FlowTemplate</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        orgId → Org<br>
+        name<br>
+        nodes <span style="color:#475569">(JSON)</span><br>
+        edges <span style="color:#475569">(JSON)</span><br>
+        assignedDepts <span style="color:#475569">([])</span><br>
+        createdBy → User
+      </div>
+    </div>
+
+    <!-- FlowNode -->
+    <div style="background:#1e293b;border:2px solid #10b981;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#34d399;margin-bottom:8px;">FlowNode (in JSON)</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        type <span style="color:#475569">(stage/approval/condition)</span><br>
+        label<br>
+        isMandatory <span style="color:#475569">(bool)</span><br>
+        checklist <span style="color:#475569">([])</span><br>
+        approvers <span style="color:#475569">(userIds/groupIds)</span><br>
+        conditions <span style="color:#475569">(branch rules)</span>
+      </div>
+    </div>
+
+    <!-- Project -->
+    <div style="background:#1e293b;border:2px solid #f43f5e;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#fb7185;margin-bottom:8px;">Project</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        orgId → Org<br>
+        deptId → Department<br>
+        flowTemplateId → FlowTemplate<br>
+        name<br>
+        status <span style="color:#475569">(active/done/archived)</span><br>
+        currentNodeId<br>
+        createdBy → User
+      </div>
+    </div>
+
+    <!-- Task -->
+    <div style="background:#1e293b;border:2px solid #f43f5e;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#fb7185;margin-bottom:8px;">Task</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        projectId → Project<br>
+        nodeId <span style="color:#475569">(flow stage)</span><br>
+        title<br>
+        assigneeId → User<br>
+        dueDate<br>
+        status <span style="color:#475569">(todo/in_progress/done)</span><br>
+        checklistItems <span style="color:#475569">(JSON)</span>
+      </div>
+    </div>
+
+    <!-- ApprovalRecord -->
+    <div style="background:#1e293b;border:2px solid #f59e0b;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#fbbf24;margin-bottom:8px;">ApprovalRecord</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        projectId → Project<br>
+        nodeId<br>
+        approverId → User<br>
+        decision <span style="color:#475569">(approved/rejected)</span><br>
+        comment<br>
+        decidedAt
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div style="background:#1e293b;border:2px solid #6366f1;border-radius:10px;padding:16px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#818cf8;margin-bottom:8px;">Notification</div>
+      <div style="font-family:monospace;font-size:13px;color:#e2e8f0;line-height:1.8;">
+        id<br>
+        userId → User<br>
+        orgId → Org<br>
+        type <span style="color:#475569">(approval_req/assigned/etc)</span><br>
+        payload <span style="color:#475569">(JSON)</span><br>
+        read <span style="color:#475569">(bool)</span><br>
+        createdAt
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:16px;background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:16px;">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:10px;">Key Design Decisions</div>
+    <div style="font-size:13px;color:#64748b;line-height:1.8;">
+      • <strong style="color:#94a3b8;">Flow nodes stored as JSON</strong> in FlowTemplate — flexible, no rigid node tables, queryable via Postgres JSONB<br>
+      • <strong style="color:#94a3b8;">Project clones snapshot of template</strong> — template changes don't affect running projects<br>
+      • <strong style="color:#94a3b8;">orgId on every row</strong> — enforced at API middleware layer, guarantees tenant isolation<br>
+      • <strong style="color:#94a3b8;">Conditions as JSON rules</strong> — e.g. <code style="color:#818cf8;">{"field":"priority","op":"eq","value":"high","goto":"nodeId"}</code>
+    </div>
+  </div>
+</div>

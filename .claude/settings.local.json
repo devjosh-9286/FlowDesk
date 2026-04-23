@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash \"/Users/joshuaphillips/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh\" --project-dir \"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager\")",
+      "WebFetch(domain:api.anthropic.com)",
+      "Bash(cp \"/Users/joshuaphillips/.claude/projects/-Users-joshuaphillips-Desktop-Code-Ideas-Project-Task-Manager/eec3c1e8-8704-40c5-ab25-f2d0e9dd17f4/tool-results/webfetch-1776971613314-s4t1ey.bin\" /tmp/design.gz)",
+      "Bash(gunzip -c /tmp/design.gz)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
+      "Bash(tar xf *)",
+      "Bash(git -C \"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/\" status)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(./node_modules/.bin/next build *)"
+    ]
+  }
+}

@@ -1,0 +1,90 @@
+<h2>System Architecture</h2>
+<p class="subtitle">How the platform fits together — Section 1 of 5</p>
+
+<div class="section">
+  <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;">
+
+    <!-- Frontend -->
+    <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:20px;min-width:200px;flex:1;max-width:220px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:8px;">Frontend</div>
+      <div style="font-weight:700;color:#f8fafc;margin-bottom:12px;">Next.js 15</div>
+      <div style="font-size:13px;color:#94a3b8;line-height:1.6;">
+        App Router<br>
+        React Flow (builder)<br>
+        dnd-kit (Kanban)<br>
+        shadcn/ui + Tailwind
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div style="display:flex;align-items:center;color:#475569;font-size:24px;">→</div>
+
+    <!-- API -->
+    <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:20px;min-width:200px;flex:1;max-width:220px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:8px;">API Layer</div>
+      <div style="font-weight:700;color:#f8fafc;margin-bottom:12px;">Next.js API Routes</div>
+      <div style="font-size:13px;color:#94a3b8;line-height:1.6;">
+        NextAuth.js<br>
+        Prisma ORM<br>
+        Zod validation<br>
+        Role middleware
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div style="display:flex;align-items:center;color:#475569;font-size:24px;">→</div>
+
+    <!-- DB -->
+    <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:20px;min-width:200px;flex:1;max-width:220px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:8px;">Data</div>
+      <div style="font-weight:700;color:#f8fafc;margin-bottom:12px;">Neon (Postgres)</div>
+      <div style="font-size:13px;color:#94a3b8;line-height:1.6;">
+        Orgs, Users, Roles<br>
+        Flow templates<br>
+        Projects, Tasks<br>
+        Approval records
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Key concepts -->
+  <div style="background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:20px;">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:16px;">Key Concepts</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;margin-top:5px;flex-shrink:0;"></div>
+        <div>
+          <div style="font-weight:600;color:#e2e8f0;font-size:14px;">Multi-tenant isolation</div>
+          <div style="color:#64748b;font-size:13px;">Every DB row scoped to orgId. No cross-org data leaks.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;margin-top:5px;flex-shrink:0;"></div>
+        <div>
+          <div style="font-weight:600;color:#e2e8f0;font-size:14px;">Flow templates → Projects</div>
+          <div style="color:#64748b;font-size:13px;">Templates are blueprints. Projects are live instances cloned from them.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;margin-top:5px;flex-shrink:0;"></div>
+        <div>
+          <div style="font-weight:600;color:#e2e8f0;font-size:14px;">Approval gates</div>
+          <div style="color:#64748b;font-size:13px;">Nodes can require sign-off from specific users or groups before progressing.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;margin-top:5px;flex-shrink:0;"></div>
+        <div>
+          <div style="font-weight:600;color:#e2e8f0;font-size:14px;">Notifications (Phase 1)</div>
+          <div style="color:#64748b;font-size:13px;">In-app + email alerts via DB polling. Real-time websockets added later.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
