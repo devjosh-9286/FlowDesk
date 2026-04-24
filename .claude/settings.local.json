@@ -11,7 +11,13 @@
       "Bash(git -C \"/Users/joshuaphillips/Desktop/Code/Ideas/Project:Task Manager/\" status)",
       "Bash(npm install *)",
       "Bash(npm run *)",
-      "Bash(./node_modules/.bin/next build *)"
+      "Bash(./node_modules/.bin/next build *)",
+      "Bash(./node_modules/.bin/next dev *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(open http://localhost:3000)",
+      "Bash(ls -d .worktrees)",
+      "Bash(ls -d worktrees)",
+      "Bash(grep -i \"worktree.*director\" CLAUDE.md)"
     ]
   }
 }
