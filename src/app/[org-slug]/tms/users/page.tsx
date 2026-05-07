@@ -17,12 +17,13 @@ export default function TmsUsersPage() {
     fetch(`/api/tms/${slug}/users`).then((r) => r.json()).then((d) => setMembers(d.members ?? []))
   }, [slug])
 
-  async function remove(userId: string) {
-    await fetch(`/api/tms/${slug}/users`, {
+  async function remove(userId: number) {
+    const res = await fetch(`/api/tms/${slug}/users`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId }),
     })
+    if (!res.ok) return
     setMembers((prev) => prev.filter((m) => m.userId !== userId))
   }
 

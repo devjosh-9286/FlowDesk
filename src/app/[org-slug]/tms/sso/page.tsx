@@ -8,7 +8,7 @@ export default async function TmsSsoPage({ params }: { params: Promise<{ 'org-sl
   if (!session?.user?.id) redirect('/login')
   const { 'org-slug': slug } = await params
   const membership = await getOrgMembership(session.user.id, slug)
-  if (!membership) redirect('/')
+  if (!membership || membership.role !== 'ADMIN') redirect(`/${slug}`)
   const config = await getTenantConfig(membership.orgId)
   const sso = config.ssoConfig as Record<string, unknown>
 

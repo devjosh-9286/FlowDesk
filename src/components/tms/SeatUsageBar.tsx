@@ -1,5 +1,5 @@
 export function SeatUsageBar({ used, limit }: { used: number; limit: number }) {
-  const pct = Math.min((used / limit) * 100, 100)
+  const pct = limit > 0 ? Math.min((used / limit) * 100, 100) : 0
   const warn = pct >= 90
   return (
     <div>

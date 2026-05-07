@@ -41,7 +41,16 @@ export async function DELETE(
   const membership = await requireAdmin(session.user.id, slug)
   if (!membership) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { userId } = await req.json()
+  let userId: string
+  try {
+    const body = await req.json()
+    userId = body?.userId
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
+  if (!userId || typeof userId !== 'string') {
+    return NextResponse.json({ error: 'userId required' }, { status: 400 })
+  }
   const target = await db.orgMembership.findFirst({
     where: { orgId: membership.orgId, userId },
     include: { user: true },

@@ -10,7 +10,7 @@ export default async function TmsBillingPage({ params }: { params: Promise<{ 'or
   if (!session?.user?.id) redirect('/login')
   const { 'org-slug': slug } = await params
   const membership = await getOrgMembership(session.user.id, slug)
-  if (!membership) redirect('/')
+  if (!membership || membership.role !== 'ADMIN') redirect(`/${slug}`)
   const config = await getTenantConfig(membership.orgId)
   const memberCount = await db.orgMembership.count({ where: { orgId: membership.orgId } })
 
