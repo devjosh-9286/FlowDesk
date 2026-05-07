@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { auth } from '@/lib/auth'
+import { getTenantConfig, isFeatureEnabled } from '@/lib/tenant-config'
 
 export async function GET(
   req: NextRequest,
@@ -44,6 +45,11 @@ export async function POST(
     where: { orgId_userId: { orgId, userId: session.user.id } },
   })
   if (!membership) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const config = await getTenantConfig(membership.orgId)
+  if (!isFeatureEnabled(config, 'approvals')) {
+    return NextResponse.json({ error: 'Feature not enabled' }, { status: 403 })
+  }
 
   const project = await db.project.findUnique({ where: { id: projectId } })
   if (!project || project.orgId !== orgId) {
