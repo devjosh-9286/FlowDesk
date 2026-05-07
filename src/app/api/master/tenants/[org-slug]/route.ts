@@ -43,7 +43,10 @@ export async function PATCH(
     update: { plan, seatLimit, featureFlags, ssoConfig, branding },
   })
 
-  if (plan !== before?.plan || seatLimit !== before?.seatLimit) {
+  const ip = req.headers.get('x-forwarded-for') ?? undefined
+
+  // Compare post-upsert values to avoid false negatives on first creation
+  if (updated.plan !== before?.plan || updated.seatLimit !== before?.seatLimit) {
     await createAuditEntry({
       orgId: org.id,
       actorId: user.id,
@@ -53,10 +56,10 @@ export async function PATCH(
       action: 'PLAN_CHANGED',
       before: before ? { plan: before.plan, seatLimit: before.seatLimit } : null,
       after: { plan: updated.plan, seatLimit: updated.seatLimit },
-      ipAddress: req.headers.get('x-forwarded-for') ?? undefined,
+      ipAddress: ip,
     })
   }
-  if (JSON.stringify(featureFlags) !== JSON.stringify(before?.featureFlags)) {
+  if (JSON.stringify(updated.featureFlags) !== JSON.stringify(before?.featureFlags)) {
     await createAuditEntry({
       orgId: org.id,
       actorId: user.id,
@@ -66,9 +69,10 @@ export async function PATCH(
       action: 'FEATURE_FLAG_CHANGED',
       before: before ? { featureFlags: before.featureFlags } : null,
       after: { featureFlags: updated.featureFlags },
+      ipAddress: ip,
     })
   }
-  if (JSON.stringify(ssoConfig) !== JSON.stringify(before?.ssoConfig)) {
+  if (JSON.stringify(updated.ssoConfig) !== JSON.stringify(before?.ssoConfig)) {
     await createAuditEntry({
       orgId: org.id,
       actorId: user.id,
@@ -78,6 +82,7 @@ export async function PATCH(
       action: 'SSO_CONFIG_CHANGED',
       before: before ? { ssoConfig: before.ssoConfig } : null,
       after: { ssoConfig: updated.ssoConfig },
+      ipAddress: ip,
     })
   }
 
