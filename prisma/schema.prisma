@@ -1,0 +1,236 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id            String         @id @default(cuid())
+  name          String
+  slug          String         @unique
+  plan          Plan           @default(FREE)
+  createdAt     DateTime       @default(now())
+  memberships   OrgMembership[]
+  departments   Department[]
+  templates     FlowTemplate[]
+  projects      Project[]
+  notifications Notification[]
+  tenantConfig  TenantConfig?
+  auditLogs     AuditLog[]
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+model User {
+  id                 String           @id @default(cuid())
+  email              String           @unique
+  name               String?
+  avatarUrl          String?
+  password           String?
+  emailVerified      Boolean          @default(false)
+  createdAt          DateTime         @default(now())
+  systemRole         String?
+  memberships        OrgMembership[]
+  createdTemplates   FlowTemplate[]
+  assignedTasks      Task[]
+  approvalRecords    ApprovalRecord[]
+  notifications      Notification[]
+  createdProjects    Project[]
+  managedDepartments Department[]     @relation("DepartmentManager")
+  tokens             VerificationToken[]
+  auditLogs          AuditLog[]       @relation("ActorAuditLogs")
+}
+
+model OrgMembership {
+  id           String      @id @default(cuid())
+  orgId        String
+  userId       String
+  role         Role        @default(MEMBER)
+  departmentId String?
+  org          Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department   Department?  @relation(fields: [departmentId], references: [id])
+
+  @@unique([orgId, userId])
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  MEMBER
+}
+
+model Department {
+  id          String         @id @default(cuid())
+  orgId       String
+  name        String
+  managerId   String?
+  org         Organization   @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  manager     User?          @relation("DepartmentManager", fields: [managerId], references: [id])
+  memberships OrgMembership[]
+  projects    Project[]
+
+  @@unique([orgId, name])
+}
+
+model FlowTemplate {
+  id              String    @id @default(cuid())
+  orgId           String
+  name            String
+  nodes           Json      @default("[]")
+  edges           Json      @default("[]")
+  assignedDeptIds String[]  @default([])
+  createdBy       String
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  org             Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  creator         User         @relation(fields: [createdBy], references: [id])
+  projects        Project[]
+}
+
+model Project {
+  id             String        @id @default(cuid())
+  orgId          String
+  deptId         String
+  flowTemplateId String
+  name           String
+  status         ProjectStatus @default(ACTIVE)
+  snapshotNodes  Json          @default("[]")
+  snapshotEdges  Json          @default("[]")
+  currentNodeId  String?
+  createdBy      String
+  createdAt      DateTime      @default(now())
+  org            Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  department     Department    @relation(fields: [deptId], references: [id])
+  template       FlowTemplate  @relation(fields: [flowTemplateId], references: [id])
+  creator        User          @relation(fields: [createdBy], references: [id])
+  tasks          Task[]
+  approvals      ApprovalRecord[]
+}
+
+enum ProjectStatus {
+  ACTIVE
+  DONE
+  ARCHIVED
+}
+
+model Task {
+  id             String     @id @default(cuid())
+  projectId      String
+  nodeId         String
+  title          String
+  assigneeId     String?
+  dueDate        DateTime?
+  status         TaskStatus @default(TODO)
+  checklistItems Json       @default("[]")
+  createdAt      DateTime   @default(now())
+  project        Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee       User?      @relation(fields: [assigneeId], references: [id])
+
+  @@index([projectId])
+  @@index([assigneeId])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+}
+
+model ApprovalRecord {
+  id          String            @id @default(cuid())
+  projectId   String
+  nodeId      String
+  approverId  String
+  decision    ApprovalDecision?
+  comment     String?
+  requestedAt DateTime          @default(now())
+  decidedAt   DateTime?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  approver    User     @relation(fields: [approverId], references: [id])
+
+  @@index([projectId])
+  @@index([approverId])
+}
+
+enum ApprovalDecision {
+  APPROVED
+  REJECTED
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  orgId     String
+  type      NotificationType
+  payload   Json             @default("{}")
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([orgId, userId])
+}
+
+enum NotificationType {
+  APPROVAL_REQUESTED
+  APPROVAL_DECIDED
+  TASK_ASSIGNED
+  STAGE_ADVANCED
+}
+
+model VerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique @default(cuid())
+  type      TokenType
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+model TenantConfig {
+  id           String       @id @default(cuid())
+  orgId        String       @unique
+  org          Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  plan         String       @default("free")
+  seatLimit    Int          @default(5)
+  featureFlags Json         @default("{\"flowBuilder\":true,\"approvals\":true,\"analytics\":false,\"customBranding\":false}")
+  ssoConfig    Json         @default("{\"provider\":null}")
+  branding     Json         @default("{}")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model AuditLog {
+  id          String        @id @default(uuid())
+  orgId       String?
+  org         Organization? @relation(fields: [orgId], references: [id], onDelete: SetNull)
+  actorId     String
+  actor       User          @relation("ActorAuditLogs", fields: [actorId], references: [id], onDelete: Cascade)
+  entityType  String
+  entityId    String
+  entityLabel String
+  action      String
+  before      Json?
+  after       Json?
+  ipAddress   String?
+  createdAt   DateTime      @default(now())
+
+  @@index([orgId, createdAt(sort: Desc)])
+  @@index([createdAt])
+}
