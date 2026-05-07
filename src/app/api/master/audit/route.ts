@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   const user = await getSuperadminSession()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { searchParams } = req.nextUrl
+  const { searchParams } = new URL(req.url)
   const orgSlug = searchParams.get('orgSlug') ?? undefined
   const entityType = searchParams.get('entityType') ?? undefined
   const action = searchParams.get('action') ?? undefined

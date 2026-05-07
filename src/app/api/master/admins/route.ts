@@ -19,6 +19,9 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { userId } = await req.json()
+  if (!userId || typeof userId !== 'string') {
+    return NextResponse.json({ error: 'userId required' }, { status: 400 })
+  }
   const updated = await db.user.update({
     where: { id: userId },
     data: { systemRole: 'SUPERADMIN' },
@@ -41,7 +44,10 @@ export async function DELETE(req: NextRequest) {
   const user = await getSuperadminSession()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { userId } = await req.json()
+  const userId = new URL(req.url).searchParams.get('userId')
+  if (!userId) {
+    return NextResponse.json({ error: 'userId required' }, { status: 400 })
+  }
   if (userId === user.id) {
     return NextResponse.json({ error: 'Cannot revoke your own SUPERADMIN role' }, { status: 400 })
   }
