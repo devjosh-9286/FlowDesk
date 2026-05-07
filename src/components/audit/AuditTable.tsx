@@ -2,19 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { AuditFilters } from './AuditFilters'
 import { AuditDetailModal } from './AuditDetailModal'
-
-type AuditEntry = {
-  id: string
-  entityLabel: string
-  entityType: string
-  action: string
-  createdAt: string
-  ipAddress?: string | null
-  actor: { name: string; email: string }
-  org?: { name: string; slug: string } | null
-  before?: Record<string, unknown> | null
-  after?: Record<string, unknown> | null
-}
+import type { AuditEntry } from '@/lib/audit'
 
 const ENTITY_COLORS: Record<string, string> = {
   PROJECT: 'bg-blue-950 text-blue-300',
@@ -42,19 +30,27 @@ export function AuditTable({ apiUrl, showTenantFilter }: { apiUrl: string; showT
   const [filters, setFilters] = useState<{ orgSlug?: string; entityType?: string; action?: string; actor?: string; days: number }>({ days: 7 })
   const [selected, setSelected] = useState<AuditEntry | null>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
-    const params = new URLSearchParams(
-      Object.entries(filters)
-        .filter(([, v]) => v !== undefined && v !== '')
-        .map(([k, v]) => [k, String(v)])
-    )
-    const res = await fetch(`${apiUrl}?${params}`)
-    const data = await res.json()
-    setEntries(data.entries ?? [])
-    setTotal(data.total ?? 0)
-    setLoading(false)
+    setError(null)
+    try {
+      const params = new URLSearchParams(
+        Object.entries(filters)
+          .filter(([, v]) => v !== undefined && v !== '')
+          .map(([k, v]) => [k, String(v)])
+      )
+      const res = await fetch(`${apiUrl}?${params}`)
+      if (!res.ok) throw new Error(`Audit fetch failed: ${res.status}`)
+      const data = await res.json()
+      setEntries(data.entries ?? [])
+      setTotal(data.total ?? 0)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load audit log')
+    } finally {
+      setLoading(false)
+    }
   }, [apiUrl, filters])
 
   useEffect(() => { load() }, [load])
@@ -74,6 +70,7 @@ export function AuditTable({ apiUrl, showTenantFilter }: { apiUrl: string; showT
   return (
     <>
       <AuditFilters filters={filters} onChange={setFilters} showTenantFilter={showTenantFilter} onExport={exportCsv} />
+      {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
       <p className="text-slate-600 text-xs mb-3">{total} events</p>
 
       {loading ? (

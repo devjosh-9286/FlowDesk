@@ -1,17 +1,5 @@
 'use client'
-
-type AuditEntry = {
-  id: string
-  entityLabel: string
-  entityType: string
-  action: string
-  createdAt: string
-  ipAddress?: string | null
-  actor: { name: string; email: string }
-  org?: { name: string; slug: string } | null
-  before?: Record<string, unknown> | null
-  after?: Record<string, unknown> | null
-}
+import type { AuditEntry } from '@/lib/audit'
 
 export function AuditDetailModal({ entry, onClose }: { entry: AuditEntry; onClose: () => void }) {
   const allKeys = Array.from(
@@ -35,7 +23,7 @@ export function AuditDetailModal({ entry, onClose }: { entry: AuditEntry; onClos
               {entry.ipAddress ? ` · ${entry.ipAddress}` : ''}
             </p>
           </div>
-          <button onClick={onClose} aria-label="✕" className="text-slate-500 bg-slate-800 rounded px-2 py-1 text-sm hover:text-slate-100">✕</button>
+          <button onClick={onClose} aria-label="Close" className="text-slate-500 bg-slate-800 rounded px-2 py-1 text-sm hover:text-slate-100">✕</button>
         </div>
 
         <div className="p-5 space-y-4">

@@ -28,7 +28,7 @@ describe('AuditDetailModal', () => {
   it('calls onClose when ✕ is clicked', async () => {
     const onClose = vi.fn()
     render(<AuditDetailModal entry={entry} onClose={onClose} />)
-    await userEvent.click(screen.getByRole('button', { name: '✕' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(onClose).toHaveBeenCalled()
   })
 })

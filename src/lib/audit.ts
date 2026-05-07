@@ -53,3 +53,16 @@ export async function createAuditEntry(params: AuditParams): Promise<void> {
     // Intentional: audit failure must never break the caller's operation.
   }
 }
+
+export type AuditEntry = {
+  id: string
+  entityLabel: string
+  entityType: string
+  action: string
+  createdAt: string
+  ipAddress?: string | null
+  actor: { name: string; email: string }
+  org?: { name: string; slug: string } | null
+  before?: Record<string, unknown> | null
+  after?: Record<string, unknown> | null
+}
