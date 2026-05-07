@@ -1,4 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+
+vi.mock('@/lib/db', () => ({
+  db: { tenantConfig: { findUnique: vi.fn() } },
+}))
+
 import { mergeWithDefaults, isFeatureEnabled } from '@/lib/tenant-config'
 
 const defaultFlags = { flowBuilder: true, approvals: true, analytics: false, customBranding: false }
