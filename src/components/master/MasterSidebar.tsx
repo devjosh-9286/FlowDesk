@@ -38,7 +38,8 @@ export function MasterSidebar({ actorEmail }: { actorEmail: string }) {
                 href={href}
                 className={cn(
                   'flex items-center gap-2 px-4 py-2 text-sm text-slate-500 hover:bg-slate-800 hover:text-slate-100',
-                  pathname === href && 'bg-slate-800 text-slate-100 border-l-2 border-indigo-400'
+                  (href === '/master' ? pathname === href : pathname.startsWith(href)) &&
+                    'bg-slate-800 text-slate-100 border-l-2 border-indigo-400'
                 )}
               >
                 {label}
