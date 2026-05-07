@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { maskSensitiveFields, buildAuditParams } from '@/lib/audit'
+import { maskSensitiveFields, buildAuditParams, createAuditEntry } from '@/lib/audit'
 
 describe('maskSensitiveFields', () => {
   it('redacts clientSecret from ssoConfig snapshot', () => {
@@ -35,5 +35,27 @@ describe('buildAuditParams', () => {
     expect(params.entityType).toBe('PROJECT')
     expect(params.before).toEqual({ status: 'active' })
     expect(params.after).toEqual({ status: 'archived' })
+  })
+})
+
+describe('createAuditEntry', () => {
+  it('resolves without throwing when db.auditLog.create throws', async () => {
+    vi.mock('@/lib/db', () => ({
+      db: {
+        auditLog: {
+          create: vi.fn().mockRejectedValue(new Error('DB connection failed')),
+        },
+      },
+    }))
+    await expect(
+      createAuditEntry({
+        orgId: 'org_abc',
+        actorId: 'user_xyz',
+        entityType: 'PROJECT',
+        entityId: '42',
+        entityLabel: 'Alpha',
+        action: 'CREATE',
+      })
+    ).resolves.toBeUndefined()
   })
 })

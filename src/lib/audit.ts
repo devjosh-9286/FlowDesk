@@ -41,6 +41,9 @@ export function buildAuditParams(params: AuditParams): AuditParams {
 /**
  * Write one audit log entry. Fire-and-forget — never throws.
  * Call AFTER the main DB write succeeds.
+ *
+ * Note: masking is applied internally via buildAuditParams.
+ * Do NOT pre-mask params before calling this function.
  */
 export async function createAuditEntry(params: AuditParams): Promise<void> {
   try {
