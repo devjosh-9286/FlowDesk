@@ -19,7 +19,7 @@ model Organization {
   projects      Project[]
   notifications Notification[]
   tenantConfig  TenantConfig?
-  auditLogs     AuditLog[]
+  auditLogs     AuditLog[]    @relation("OrgAuditLogs")
 }
 
 enum Plan {
@@ -210,16 +210,16 @@ model TenantConfig {
   plan         String       @default("free")
   seatLimit    Int          @default(5)
   featureFlags Json         @default("{\"flowBuilder\":true,\"approvals\":true,\"analytics\":false,\"customBranding\":false}")
-  ssoConfig    Json         @default("{\"provider\":null}")
+  ssoConfig    Json         @default("{}")
   branding     Json         @default("{}")
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 }
 
 model AuditLog {
-  id          String        @id @default(uuid())
+  id          String        @id @default(uuid()) // UUID chosen for global uniqueness of audit event IDs; diverges from cuid() used elsewhere intentionally
   orgId       String?
-  org         Organization? @relation(fields: [orgId], references: [id], onDelete: SetNull)
+  org         Organization? @relation("OrgAuditLogs", fields: [orgId], references: [id], onDelete: SetNull)
   actorId     String
   actor       User          @relation("ActorAuditLogs", fields: [actorId], references: [id], onDelete: Cascade)
   entityType  String
