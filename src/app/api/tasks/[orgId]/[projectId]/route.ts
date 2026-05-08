@@ -46,6 +46,10 @@ export async function POST(
   })
   if (!membership) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
+  if (!['ADMIN', 'MANAGER'].includes(membership.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const project = await db.project.findUnique({ where: { id: projectId } })
   if (!project || project.orgId !== orgId) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })

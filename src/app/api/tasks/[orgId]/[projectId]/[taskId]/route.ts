@@ -45,6 +45,10 @@ export async function PATCH(
   })
   if (!membership) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
+  if (!['ADMIN', 'MANAGER'].includes(membership.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const task = await db.task.findUnique({ where: { id: taskId } })
   if (!task || task.projectId !== projectId) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
@@ -109,6 +113,10 @@ export async function DELETE(
     where: { orgId_userId: { orgId, userId: session.user.id } },
   })
   if (!membership) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  if (!['ADMIN', 'MANAGER'].includes(membership.role)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
 
   const task = await db.task.findUnique({ where: { id: taskId } })
   if (!task || task.projectId !== projectId) {
