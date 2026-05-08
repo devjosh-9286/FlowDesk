@@ -3,6 +3,18 @@ import { db } from '@/lib/db'
 import { getSuperadminSession } from '@/lib/master-context'
 import { createAuditEntry } from '@/lib/audit'
 
+function shallowDeepEqual(
+  a: Record<string, unknown> | null | undefined,
+  b: Record<string, unknown> | null | undefined
+): boolean {
+  if (a === b) return true
+  if (!a || !b) return false
+  const keysA = Object.keys(a)
+  const keysB = Object.keys(b)
+  if (keysA.length !== keysB.length) return false
+  return keysA.every((k) => JSON.stringify(a[k]) === JSON.stringify(b[k]))
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ 'org-slug': string }> }
@@ -59,7 +71,7 @@ export async function PATCH(
       ipAddress: ip,
     })
   }
-  if (JSON.stringify(updated.featureFlags) !== JSON.stringify(before?.featureFlags)) {
+  if (!shallowDeepEqual(updated.featureFlags as Record<string, unknown>, before?.featureFlags as Record<string, unknown>)) {
     await createAuditEntry({
       orgId: org.id,
       actorId: user.id,
@@ -72,7 +84,7 @@ export async function PATCH(
       ipAddress: ip,
     })
   }
-  if (JSON.stringify(updated.ssoConfig) !== JSON.stringify(before?.ssoConfig)) {
+  if (!shallowDeepEqual(updated.ssoConfig as Record<string, unknown>, before?.ssoConfig as Record<string, unknown>)) {
     await createAuditEntry({
       orgId: org.id,
       actorId: user.id,
