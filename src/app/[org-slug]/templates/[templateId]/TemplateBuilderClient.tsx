@@ -49,6 +49,7 @@ export function TemplateBuilderClient({ orgSlug, orgId, template }: Props) {
   const [panning, setPanning] = useState<{ startX: number; startY: number; startPanX: number; startPanY: number } | null>(null)
   const [connectFrom, setConnectFrom] = useState<string | null>(null)
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null)
+  const [publishedAt, setPublishedAt] = useState(template.publishedAt)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState('')
@@ -138,6 +139,7 @@ export function TemplateBuilderClient({ orgSlug, orgId, template }: Props) {
         }),
       })
       if (res.ok) {
+        if (publish) setPublishedAt(new Date().toISOString())
         setSaved(true)
         setTimeout(() => setSaved(false), 2000)
       } else {
@@ -164,7 +166,7 @@ export function TemplateBuilderClient({ orgSlug, orgId, template }: Props) {
             {saveError && <span style={{ fontSize: 12, color: t.red }}>{saveError}</span>}
             <Btn size="sm" dark={dark} onClick={() => handleSave(false)} disabled={saving}>Save draft</Btn>
             <Btn size="sm" variant="primary" dark={dark} icon={Icons.play} onClick={() => handleSave(true)} disabled={saving}>
-              {template.publishedAt ? 'Update & publish' : 'Publish'}
+              {publishedAt ? 'Update & publish' : 'Publish'}
             </Btn>
           </div>
         }
@@ -180,8 +182,11 @@ export function TemplateBuilderClient({ orgSlug, orgId, template }: Props) {
               onMouseEnter={e => (e.currentTarget.style.background = t.surface2)}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               onClick={() => {
-                const cx = (400 - pan.x) / zoom
-                const cy = (200 + nodes.length * 20 - pan.y) / zoom
+                // Stagger new nodes in a grid to avoid overlap
+                const col = nodes.length % 3
+                const row = Math.floor(nodes.length / 3)
+                const cx = (80 + col * (NODE_W + 40) - pan.x) / zoom
+                const cy = (80 + row * (NODE_H + 40) - pan.y) / zoom
                 const newNode: FlowNode = {
                   id: `n${Date.now()}`, type: k, label: v.label,
                   x: cx, y: cy, isMandatory: false, checklist: [], approvalMode: 'any',
@@ -255,7 +260,7 @@ export function TemplateBuilderClient({ orgSlug, orgId, template }: Props) {
 
             {/* Nodes */}
             {nodes.map(node => {
-              const cfg = NODE_TYPES[node.type]
+              const cfg = NODE_TYPES[node.type] ?? NODE_TYPES.stage
               const isSel = selected === node.id
               return (
                 <div
