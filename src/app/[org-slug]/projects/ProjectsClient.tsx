@@ -10,7 +10,7 @@ import { Icons } from '@/components/ui/Icon'
 
 interface Project {
   id: string; name: string; status: string; templateName: string
-  deptName: string; taskCount: number; createdAt: string
+  deptName: string; taskCount: number
 }
 interface Template { id: string; name: string }
 interface Dept { id: string; name: string }
@@ -25,7 +25,7 @@ export function ProjectsClient({ orgSlug, orgId, canCreate, projects, templates,
   const t = getTokens(dark)
   const router = useRouter()
   const [creating, setCreating] = useState(false)
-  const [form, setForm] = useState({ name: '', templateId: '', deptId: '' })
+  const [form, setForm] = useState({ name: '', flowTemplateId: '', deptId: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState<'ALL' | 'ACTIVE' | 'DONE' | 'ARCHIVED'>('ALL')
@@ -34,13 +34,13 @@ export function ProjectsClient({ orgSlug, orgId, canCreate, projects, templates,
 
   function closeModal() {
     setCreating(false)
-    setForm({ name: '', templateId: '', deptId: '' })
+    setForm({ name: '', flowTemplateId: '', deptId: '' })
     setError('')
   }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.templateId || !form.deptId) { setError('Select template and department'); return }
+    if (!form.flowTemplateId || !form.deptId) { setError('Select template and department'); return }
     setLoading(true); setError('')
     try {
       const res = await fetch(`/api/projects/${orgId}`, {
@@ -108,7 +108,7 @@ export function ProjectsClient({ orgSlug, orgId, canCreate, projects, templates,
         </div>
 
         {/* Create modal */}
-        {creating && (
+        {creating && canCreate && (
           <div
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}
             onClick={e => { if (e.target === e.currentTarget) closeModal() }}
@@ -136,8 +136,8 @@ export function ProjectsClient({ orgSlug, orgId, canCreate, projects, templates,
                     </div>
                   ) : (
                     <select
-                      value={form.templateId}
-                      onChange={e => setForm(f => ({ ...f, templateId: e.target.value }))}
+                      value={form.flowTemplateId}
+                      onChange={e => setForm(f => ({ ...f, flowTemplateId: e.target.value }))}
                       required
                       style={inputStyle}
                     >

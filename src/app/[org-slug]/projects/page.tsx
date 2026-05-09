@@ -50,10 +50,9 @@ export default async function ProjectsPage({
           id: p.id,
           name: p.name,
           status: p.status,
-          templateName: p.template.name,
-          deptName: p.department.name,
+          templateName: p.template?.name ?? '(deleted)',
+          deptName: p.department?.name ?? '(deleted)',
           taskCount: p._count.tasks,
-          createdAt: p.createdAt.toISOString(),
         }))}
         templates={templates}
         departments={departments}
