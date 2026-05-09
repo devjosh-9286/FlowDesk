@@ -12,7 +12,7 @@ interface Tab {
 }
 
 interface AppHeaderProps {
-  crumbs: string[]
+  crumbs: (string | React.ReactNode)[]
   right?: React.ReactNode
   dark: boolean
   tabs?: Tab[]
