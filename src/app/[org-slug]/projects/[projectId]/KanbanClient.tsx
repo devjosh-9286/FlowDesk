@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { getTokens } from '@/lib/tokens'
 import { useDark } from '@/components/shell/DarkProvider'
@@ -32,10 +32,13 @@ export function KanbanClient({ orgSlug, orgId, project, tasks: initialTasks, mem
   const { dark } = useDark()
   const t = getTokens(dark)
   const [tasks, setTasks] = useState(initialTasks)
+  const tasksRef = useRef(tasks)
+  useEffect(() => { tasksRef.current = tasks }, [tasks])
   const [dragId, setDragId] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
   const [newTitle, setNewTitle] = useState('')
+  const [createError, setCreateError] = useState('')
   const [saving, setSaving] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
@@ -45,23 +48,24 @@ export function KanbanClient({ orgSlug, orgId, project, tasks: initialTasks, mem
   }))
 
   async function moveTask(taskId: string, newStatus: string) {
+    const snapshot = tasksRef.current
     setTasks(prev => prev.map(tk => tk.id === taskId ? { ...tk, status: newStatus } : tk))
     try {
-      await fetch(`/api/tasks/${orgId}/${project.id}/${taskId}`, {
+      const res = await fetch(`/api/tasks/${orgId}/${project.id}/${taskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       })
+      if (!res.ok) setTasks(snapshot)
     } catch {
-      // Revert optimistic update on network error
-      setTasks(initialTasks)
+      setTasks(snapshot)
     }
   }
 
   async function createTask(e: React.FormEvent) {
     e.preventDefault()
     if (!newTitle.trim()) return
-    setSaving(true)
+    setSaving(true); setCreateError('')
     try {
       const res = await fetch(`/api/tasks/${orgId}/${project.id}`, {
         method: 'POST',
@@ -82,7 +86,12 @@ export function KanbanClient({ orgSlug, orgId, project, tasks: initialTasks, mem
         }])
         setNewTitle('')
         setCreating(false)
+      } else {
+        const d = await res.json().catch(() => ({}))
+        setCreateError(d.error ?? 'Failed to create task')
       }
+    } catch {
+      setCreateError('Network error')
     } finally {
       setSaving(false)
     }
@@ -113,7 +122,7 @@ export function KanbanClient({ orgSlug, orgId, project, tasks: initialTasks, mem
             onDragOver={e => { e.preventDefault(); setDragOver(col.id) }}
             onDragLeave={() => setDragOver(prev => prev === col.id ? null : prev)}
             onDrop={() => {
-              if (dragId && dragId !== col.id) {
+              if (dragId) {
                 const task = tasks.find(tk => tk.id === dragId)
                 if (task && task.status !== col.id) moveTask(dragId, col.id)
                 setDragId(null); setDragOver(null)
@@ -199,6 +208,7 @@ export function KanbanClient({ orgSlug, orgId, project, tasks: initialTasks, mem
         >
           <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: 12, padding: 24, width: 380, boxShadow: t.shadowLg }}>
             <h2 style={{ fontSize: 15, fontWeight: 700, color: t.text, margin: '0 0 14px' }}>New task</h2>
+            {createError && <div style={{ color: t.red, fontSize: 12, marginBottom: 8 }}>{createError}</div>}
             <form onSubmit={createTask} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <input
                 value={newTitle}

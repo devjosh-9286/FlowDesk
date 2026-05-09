@@ -44,7 +44,7 @@ export default async function ProjectKanbanPage({
       <KanbanClient
         orgSlug={slug}
         orgId={org.id}
-        project={{ id: project.id, name: project.name, templateName: project.template.name }}
+        project={{ id: project.id, name: project.name, templateName: project.template?.name ?? '' }}
         tasks={project.tasks.map(tk => ({
           id: tk.id,
           title: tk.title,
