@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { getTokens } from '@/lib/tokens'
 import { useDark } from '@/components/shell/DarkProvider'
 import { AppHeader } from '@/components/shell/AppHeader'
@@ -134,14 +135,19 @@ function ApproveBtn({ approvalId, orgId, projectId, decision }: {
 }) {
   const { dark } = useDark()
   const t = getTokens(dark)
+  const router = useRouter()
 
   async function act() {
-    await fetch(`/api/approvals/${orgId}/${projectId}/${approvalId}`, {
+    const res = await fetch(`/api/approvals/${orgId}/${projectId}/${approvalId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ decision }),
     })
-    window.location.reload()
+    if (!res.ok) {
+      alert('Action failed — please refresh and try again')
+      return
+    }
+    router.refresh()
   }
 
   return (

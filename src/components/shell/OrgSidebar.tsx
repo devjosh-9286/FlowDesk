@@ -22,7 +22,7 @@ export function OrgSidebar({ orgName, orgSlug, plan, memberCount, role, userName
   const t = getTokens(dark)
   const pathname = usePathname()
 
-  const initials = orgName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+  const initials = orgName.trim().split(/\s+/).filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'
 
   const mainItems = [
     { label: 'Dashboard',  icon: Icons.home,     href: `/${orgSlug}` },
@@ -94,7 +94,7 @@ export function OrgSidebar({ orgName, orgSlug, plan, memberCount, role, userName
           </button>
         </div>
         <div style={{ padding: '8px 10px', borderTop: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 22, height: 22, borderRadius: '50%', background: '#7C3AED30', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#7C3AED', flexShrink: 0 }}>
+          <div style={{ width: 22, height: 22, borderRadius: '50%', background: t.accent + '30', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: t.accent, flexShrink: 0 }}>
             {(userName || userEmail).charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>

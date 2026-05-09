@@ -20,50 +20,56 @@ export default async function OrgDashboard({
   })
   if (!membership) redirect('/orgs')
 
-  const [activeProjects, pendingApprovals, myTasks, user] = await Promise.all([
-    db.project.findMany({
-      where: { orgId: org.id, status: 'ACTIVE' },
-      include: {
-        template: { select: { name: true } },
-        _count: { select: { tasks: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 10,
-    }),
-    db.approvalRecord.findMany({
-      where: { project: { orgId: org.id }, approverId: session.user.id, decision: null },
-      include: { project: { select: { id: true, name: true, orgId: true } } },
-      take: 5,
-    }),
-    db.task.findMany({
-      where: { project: { orgId: org.id }, assigneeId: session.user.id, status: { not: 'DONE' } },
-    }),
-    db.user.findUnique({ where: { id: session.user.id } }),
-  ])
+  try {
+    const [activeProjects, pendingApprovals, myTaskCount, user] = await Promise.all([
+      db.project.findMany({
+        where: { orgId: org.id, status: 'ACTIVE' },
+        include: {
+          template: { select: { name: true } },
+          _count: { select: { tasks: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 10,
+      }),
+      db.approvalRecord.findMany({
+        where: { project: { orgId: org.id }, approverId: session.user.id, decision: null },
+        include: { project: { select: { id: true, name: true, orgId: true } } },
+        take: 5,
+      }),
+      db.task.count({
+        where: { project: { orgId: org.id }, assigneeId: session.user.id, status: { not: 'DONE' } },
+      }),
+      db.user.findUnique({ where: { id: session.user.id } }),
+    ])
 
-  return (
-    <OrgDashboardClient
-      orgSlug={slug}
-      orgId={org.id}
-      stats={{
-        activeProjects: activeProjects.length,
-        pendingApprovals: pendingApprovals.length,
-        myTasks: myTasks.length,
-      }}
-      projects={activeProjects.map(p => ({
-        id: p.id,
-        name: p.name,
-        templateName: p.template.name,
-        taskCount: p._count.tasks,
-      }))}
-      pendingApprovals={pendingApprovals.map(a => ({
-        id: a.id,
-        projectName: a.project.name,
-        projectId: a.project.id,
-        orgId: a.project.orgId,
-        requestedAt: a.requestedAt.toISOString(),
-      }))}
-      userName={user?.name ?? user?.email ?? 'there'}
-    />
-  )
+    return (
+      <OrgDashboardClient
+        orgSlug={slug}
+        orgId={org.id}
+        stats={{
+          activeProjects: activeProjects.length,
+          pendingApprovals: pendingApprovals.length,
+          myTasks: myTaskCount,
+        }}
+        projects={activeProjects.map(p => ({
+          id: p.id,
+          name: p.name,
+          templateName: p.template.name,
+          taskCount: p._count.tasks,
+        }))}
+        pendingApprovals={pendingApprovals.map(a => ({
+          id: a.id,
+          projectName: a.project.name,
+          projectId: a.project.id,
+          orgId: a.project.orgId,
+          requestedAt: a.requestedAt.toISOString(),
+        }))}
+        userName={user?.name ?? user?.email ?? 'there'}
+      />
+    )
+  } catch (e) {
+    if (e instanceof Error && e.message === 'NEXT_REDIRECT') throw e
+    console.error('[OrgDashboard]', e)
+    redirect('/orgs')
+  }
 }
