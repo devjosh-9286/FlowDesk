@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { auth } from '@/lib/auth'
+import { createAuditEntry } from '@/lib/audit'
 
 export async function GET(
   req: NextRequest,
@@ -10,6 +11,9 @@ export async function GET(
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { orgId } = await params
+
+  const org = await db.organization.findUnique({ where: { id: orgId } })
+  if (!org) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   try {
     const membership = await db.orgMembership.findUnique({
@@ -41,6 +45,9 @@ export async function POST(
 
   const { orgId } = await params
 
+  const org = await db.organization.findUnique({ where: { id: orgId } })
+  if (!org) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
   try {
     const membership = await db.orgMembership.findUnique({
       where: { orgId_userId: { orgId, userId: session.user.id } },
@@ -60,6 +67,19 @@ export async function POST(
         createdBy: session.user.id,
       },
     })
+
+    const ip = req.headers.get('x-forwarded-for') ?? undefined
+    await createAuditEntry({
+      orgId,
+      actorId: session.user.id,
+      entityType: 'FLOW_TEMPLATE',
+      entityId: template.id,
+      entityLabel: template.name,
+      action: 'CREATE',
+      after: { name: template.name },
+      ipAddress: ip,
+    })
+
     return NextResponse.json({ template }, { status: 201 })
   } catch (err) {
     console.error('[templates POST]', err)

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { auth } from '@/lib/auth'
+import { createAuditEntry } from '@/lib/audit'
 
 async function getMembership(orgId: string, userId: string) {
   return db.orgMembership.findUnique({
@@ -16,6 +17,9 @@ export async function GET(
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { orgId, templateId } = await params
+
+  const org = await db.organization.findUnique({ where: { id: orgId } })
+  if (!org) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   try {
     const membership = await getMembership(orgId, session.user.id)
@@ -40,6 +44,9 @@ export async function PATCH(
 
   const { orgId, templateId } = await params
 
+  const org = await db.organization.findUnique({ where: { id: orgId } })
+  if (!org) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
   try {
     const membership = await getMembership(orgId, session.user.id)
     if (!membership || membership.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -57,6 +64,19 @@ export async function PATCH(
         ...(publishedAt !== undefined && { publishedAt: publishedAt ? new Date(publishedAt) : null }),
       },
     })
+
+    const ip = req.headers.get('x-forwarded-for') ?? undefined
+    await createAuditEntry({
+      orgId,
+      actorId: session.user.id,
+      entityType: 'FLOW_TEMPLATE',
+      entityId: updated.id,
+      entityLabel: updated.name,
+      action: 'UPDATE',
+      after: { name: updated.name, publishedAt: updated.publishedAt },
+      ipAddress: ip,
+    })
+
     return NextResponse.json({ template: updated })
   } catch (err) {
     console.error('[template PATCH]', err)
@@ -73,6 +93,9 @@ export async function DELETE(
 
   const { orgId, templateId } = await params
 
+  const org = await db.organization.findUnique({ where: { id: orgId } })
+  if (!org) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
   try {
     const membership = await getMembership(orgId, session.user.id)
     if (!membership || membership.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -81,7 +104,19 @@ export async function DELETE(
     if (!template || template.orgId !== orgId) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
     await db.flowTemplate.delete({ where: { id: templateId } })
-    return NextResponse.json({ ok: true })
+
+    const ip = req.headers.get('x-forwarded-for') ?? undefined
+    await createAuditEntry({
+      orgId,
+      actorId: session.user.id,
+      entityType: 'FLOW_TEMPLATE',
+      entityId: templateId,
+      entityLabel: template.name,
+      action: 'DELETE',
+      ipAddress: ip,
+    })
+
+    return NextResponse.json({ success: true })
   } catch (err) {
     console.error('[template DELETE]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
