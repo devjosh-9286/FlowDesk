@@ -67,7 +67,7 @@ export function CreateOrgForm() {
         />
       </div>
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="button" onClick={() => setOpen(false)}
+        <button type="button" onClick={() => { setOpen(false); setName(''); setSlug(''); setError('') }}
           style={{ flex: 1, padding: '8px', fontSize: 13, background: 'transparent', border: '1px solid #26262E', color: '#A1A1AA', borderRadius: 7, cursor: 'pointer', fontFamily: 'inherit' }}>
           Cancel
         </button>
